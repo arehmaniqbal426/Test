@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Requirements Intake — AI Business Analyst</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="header-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="6" fill="white" fill-opacity="0.15"/>
+            <path d="M7 14h14M14 7v14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="4" stroke="white" stroke-width="2"/>
+          </svg>
+        </div>
+        <div>
+          <div class="header-title">Requirements Intake</div>
+          <div class="header-subtitle">AI Business Analyst · Powered by Claude</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" id="newSessionBtn" title="Start a new intake session">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          New Session
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Layout -->
+  <main class="app-main">
+
+    <!-- Chat Panel -->
+    <section class="panel chat-panel" id="chatPanel">
+      <div class="panel-header">
+        <span class="panel-title">Conversation</span>
+        <div class="status-badge" id="statusBadge">
+          <span class="status-dot"></span>
+          <span id="statusText">Ready</span>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <!-- Welcome state -->
+        <div class="welcome-state" id="welcomeState">
+          <div class="welcome-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <rect width="48" height="48" rx="12" fill="#EEF2FF"/>
+              <path d="M16 24h16M24 16v16" stroke="#4F46E5" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="24" cy="24" r="8" stroke="#4F46E5" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <h2>Ready to capture your requirements</h2>
+          <p>Click <strong>Start Session</strong> to begin a guided conversation with your AI Business Analyst. You'll be asked a series of focused questions to build a complete requirements document.</p>
+          <button class="btn btn-primary btn-lg" id="startBtn">Start Session</button>
+        </div>
+      </div>
+
+      <div class="chat-input-area" id="chatInputArea" style="display:none">
+        <div class="chat-input-wrap">
+          <textarea
+            id="messageInput"
+            placeholder="Type your response here…"
+            rows="2"
+            maxlength="4000"
+          ></textarea>
+          <button class="btn btn-send" id="sendBtn" disabled>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M18 10L4 4l2.5 6L4 16l14-6z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+        <div class="input-hint">Press <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to send</div>
+      </div>
+    </section>
+
+    <!-- Divider / Resize handle -->
+    <div class="panel-divider" id="panelDivider"></div>
+
+    <!-- Document Panel -->
+    <section class="panel doc-panel" id="docPanel">
+      <div class="panel-header">
+        <span class="panel-title">Requirements Document</span>
+        <div class="doc-actions" id="docActions" style="display:none">
+          <button class="btn btn-sm btn-outline" id="copyBtn" title="Copy markdown">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M4 3V2.5A1.5 1.5 0 015.5 1h6A1.5 1.5 0 0113 2.5v8A1.5 1.5 0 0111.5 12H11" stroke="currentColor" stroke-width="1.5"/></svg>
+            Copy
+          </button>
+          <button class="btn btn-sm btn-outline" id="downloadBtn" title="Download as .md file">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Download
+          </button>
+          <button class="btn btn-sm btn-sharepoint" id="sharepointBtn" title="Export to SharePoint">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M7 4.5v5M4.5 7h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            SharePoint
+          </button>
+        </div>
+      </div>
+
+      <div class="doc-empty" id="docEmpty">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <rect width="56" height="56" rx="12" fill="#F8FAFC"/>
+          <rect x="16" y="14" width="24" height="29" rx="2" stroke="#CBD5E1" stroke-width="1.5"/>
+          <path d="M21 21h14M21 26h14M21 31h9" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <p>Your requirements document will appear here once you've completed the conversation.</p>
+      </div>
+
+      <div class="doc-content" id="docContent" style="display:none">
+        <div id="docRendered"></div>
+      </div>
+
+      <div class="doc-status-bar" id="docStatusBar" style="display:none">
+        <span id="docStatusText"></span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Confirmation modal -->
+  <div class="modal-overlay" id="modalOverlay" style="display:none">
+    <div class="modal">
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="modalCancel">Cancel</button>
+        <button class="btn btn-primary" id="modalConfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
